@@ -1,14 +1,39 @@
-import React from 'react'
+import React, { useState, type ChangeEvent } from 'react'
 import { IoPersonCircle } from 'react-icons/io5'
 import { IoIosPerson } from 'react-icons/io'
 import { FaSquareFacebook } from 'react-icons/fa6'
 import { FcGoogle } from 'react-icons/fc'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { LoginPageLayout } from '../../../layout/login_layout'
+import InputBox from '../components/InputBox'
+import { useLoginAuth } from '../hook'
+
 const style = {
   loginPage: 'bg-',
 }
 
 function Login() {
+  const [Account, setAccount] = useState<string>('')
+  const [Password, setPassword] = useState('')
+  const navigate = useNavigate()
+
+  function OnAccountChangeListener(event: ChangeEvent<HTMLInputElement>) {
+    console.log('account : ', event.target.value)
+    setAccount(event.target.value)
+  }
+  function OnPasswordChangeListener(event: ChangeEvent<HTMLInputElement>) {
+    console.log('password : ', event.target.value)
+    setPassword(event.target.value)
+  }
+
+  async function LoginFn(accountname: string, password: string) {
+    const result = await useLoginAuth(accountname, password)
+    console.log(result)
+    if (result === 'ok') {
+      navigate('/app')
+    }
+  }
+
   return (
     <div className='flex justify-center w-full h-full mainContent'>
       <div className='loginCard grid w-[430px] h-[550px] justify-center gap-5 pr-3 pl-3 bg-white shadow-xs rounded-4xl shadow-blue-400 m-auto'>
@@ -19,17 +44,24 @@ function Login() {
 
         <div className='loginContainer grid justify-center items-center gap-6  w-[350px] h-[350px] border-t-[1px] border-gray-300 '>
           <div className='grid w-[350px] h-[140px] gap-2 '>
-            <input
-              type='text'
-              placeholder='Email or Username'
-              className='w-[350px] h-[40px] text-xs mt-4 pl-10 border-1 border-spacing-0.5 bg-[rgba(238,234,234,0.36)] rounded-xl border-[rgba(238,234,234,0.9)]'
-            ></input>
-            <input
-              type='password'
-              placeholder={'Password'}
-              className='w-[350px] h-[40px] text-xs mt-2 pl-10 border-1 border-spacing-0.5 bg-[rgba(238,234,234,0.36)] rounded-xl border-[rgba(238,234,234,0.9)]'
-            ></input>
-            <button className='SignInBtn w-[350px] h-[40px] text-white bg-blue-400 rounded-4xl mt-5'>
+            <InputBox
+              inputType='text'
+              placeholderContent='Email or Username'
+              cssStyle={LoginPageLayout.InputBox}
+              eventListenerFn={OnAccountChangeListener}
+            />
+            <InputBox
+              inputType='password'
+              placeholderContent='Password'
+              cssStyle={LoginPageLayout.InputBox}
+              eventListenerFn={OnPasswordChangeListener}
+            />
+            <button
+              onClick={() => {
+                LoginFn(Account, Password)
+              }}
+              className='SignInBtn w-[350px] h-[40px] text-white bg-blue-400 rounded-4xl mt-5'
+            >
               確定
             </button>
           </div>
@@ -41,11 +73,15 @@ function Login() {
           </div>
 
           <div className='flex w-full h-full gap-2 OtherLoginOptionBtn'>
-            <button className='flex items-center justify-center text-gray-500 gap-2 border-[1px] w-[170px] h-[50px] rounded-xl border-[rgba(238,234,234,0.9)]'>
+            <button
+              className={`${LoginPageLayout.SignInWithOtherOption} text-gray-500 bg-white `}
+            >
               <FcGoogle className='text-4xl' />
               使用Google登入
             </button>
-            <button className='flex items-center justify-center gap-2 bg-blue-500 text-white border-[1px] w-[180px] h-[50px] rounded-xl border-[rgba(238,234,234,0.9)]'>
+            <button
+              className={`${LoginPageLayout.SignInWithOtherOption} text-white bg-blue-500 `}
+            >
               <FaSquareFacebook className='text-4xl' />
               使用FB登入
             </button>
