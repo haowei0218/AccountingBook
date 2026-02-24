@@ -10,6 +10,7 @@ import QueryResolvers from "./graphql/resolvers/query.js"
 import { MutationResolvers } from "./graphql/resolvers/mutation.js"
 import { mergeResolvers } from "@graphql-tools/merge"
 import { expressMiddleware } from '@as-integrations/express4'
+import { verifyToken } from "./services/auth.js";
 
 
 const MergeResolvers = mergeResolvers([QueryResolvers, MutationResolvers])
@@ -41,9 +42,27 @@ async function startServer() {
 
 
   app.use("/graphql", cors(), bodyParser.json(), expressMiddleware(server, {
-    context: async () => ({
-      db: SupabaseClient
-    }),
+    context: async ({ req }) => {
+      const auth = req.headers.authorization || ''
+      const db = SupabaseClient
+
+      /**只需要驗證是否已經登入了 */
+      let userid = null
+
+      if (auth.startsWith('Bearer ')) {
+        try {
+          const token = auth.slice(7)
+          const payload = verifyToken(token)
+          userid = payload
+
+        } catch (e) {
+          userid = null
+        }
+      }
+
+      return { userid, db }
+
+    },
 
     formatError: (error) => {
       return {

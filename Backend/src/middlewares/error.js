@@ -1,3 +1,4 @@
+import { GraphQLError } from "graphql";
 export const ValidationError = {
   VALIDATION_FAILD: "VALIDATION_FAILD",
   REQUIRED_FAILD_MISSING: "REQUIRED_FAILD_MISSING",
@@ -27,7 +28,7 @@ export const BaseError = {
 }
 
 export function throwError(e) {
-  throw new GraphQLError("Internal server error", {
+  throw new GraphQLError(`fetch error : ${e}`, {
     extensions: { code: "INTERNAL_SERVER_ERROR" }
   });
 }

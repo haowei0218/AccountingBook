@@ -25,12 +25,13 @@ export async function UserSignVerify(
     })
 
     const LoginResult = UserAuthResponse.data?.UserLogin.data
+    const Authtoken = UserAuthResponse.data?.UserLogin.token
 
     if (!LoginResult) {
       toast.error('帳號或密碼錯誤 請重新輸入')
       return null
     } else {
-      return LoginResult
+      return { LoginResult, Authtoken }
     }
   } catch (e) {
     console.log('error : ', e)

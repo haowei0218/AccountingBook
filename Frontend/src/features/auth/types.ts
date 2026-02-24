@@ -12,5 +12,6 @@ export type UserAuthData = {
       code: string
       serviceDate: string
     }
+    token: string
   }
 }

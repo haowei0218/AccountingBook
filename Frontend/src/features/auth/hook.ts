@@ -8,6 +8,7 @@ import { UserSignVerify } from './service.ts'
 export async function useLoginAuth(accountname: string, password: string) {
   try {
     const LoginResult = await UserSignVerify(accountname, password)
+    console.log('Login result : ', LoginResult)
     if (LoginResult === 'EMPTY_ACCOUNT')
       toast.error('帳號或密碼不可為空 請重新輸入')
     else if (LoginResult === 'EMPTY_PASSWORD')
@@ -15,9 +16,12 @@ export async function useLoginAuth(accountname: string, password: string) {
     else if (LoginResult === 'INVALID_ACCOUNT')
       toast.error('帳號必須符合Email格式:xxxxxx@xxx 請重新輸入')
     else if (!LoginResult) toast.error('帳號或密碼錯誤 請重新輸入')
-    else if (LoginResult.length > 0) {
+    else if (LoginResult.Authtoken.length > 0) {
       toast.success('登入成功')
+      localStorage.setItem('token', LoginResult.Authtoken)
       return 'ok'
+    } else {
+      toast.error('登入錯誤 請重新輸入帳號密碼')
     }
   } catch (e) {
     console.log('error : ', e)

@@ -14,6 +14,7 @@ export const UserAuth = gql`
         code
         serviceDate
       }
+      token
     }
   }
 `

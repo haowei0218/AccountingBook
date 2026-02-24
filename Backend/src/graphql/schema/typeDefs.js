@@ -19,8 +19,8 @@ export const ResponseLog = gql`
 `
 export const AuthUserResponse = gql`
   type AuthUserResponse{
-    data:[User!]
+    data:User!
     log:ResponseLog!
+    token:String!
   }
-
 `
